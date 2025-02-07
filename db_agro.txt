@@ -1,0 +1,82 @@
+CREATE TABLE IF NOT EXISTS `db_agroinsect`.`state` (
+  `state_id` INT NOT NULL AUTO_INCREMENT,
+  `state_name` VARCHAR(45) NOT NULL,
+  `state_abr` VARCHAR(2) NULL,
+  PRIMARY KEY (`state_id`),
+  UNIQUE INDEX `state_name_UNIQUE` (`state_name` ASC) VISIBLE)
+ENGINE = InnoDB
+
+
+
+CREATE TABLE IF NOT EXISTS `db_agroinsect`.`cities` (
+  `cities_id` INT NOT NULL AUTO_INCREMENT,
+  `state_id` INT NULL,
+  `cities_name` VARCHAR(45) NULL,
+  `cities_code` INT UNSIGNED NULL,
+  PRIMARY KEY (`cities_id`),
+  INDEX `fk_state_cidade_idx` (`state_id` ASC) VISIBLE,
+  CONSTRAINT `fk_state_cidade`
+    FOREIGN KEY (`state_id`)
+    REFERENCES `db_agroinsect`.`state` (`state_id`)
+    ON DELETE RESTRICT
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+
+
+
+CREATE TABLE IF NOT EXISTS `db_agroinsect`.`user` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `cities_id` INT NOT NULL,
+  `user_name` VARCHAR(50) NULL,
+  `user_cpf` CHAR(11) NOT NULL,
+  `user_login` VARCHAR(50) NOT NULL,
+  `user_password` CHAR(8) NOT NULL,
+  `user_address` VARCHAR(45) NOT NULL,
+  `user_neighborhood` VARCHAR(45) NOT NULL,
+  `user_complement` VARCHAR(45) NOT NULL,
+  `user_number` INT NULL,
+  `user_birthdate` DATE NULL,
+  `user_phone` VARCHAR(20) NULL,
+  `user_cellphone` VARCHAR(20) NULL,
+  `user_email` VARCHAR(50) NOT NULL,
+  `user_created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_update` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `user_cpf_UNIQUE` (`user_cpf` ASC) VISIBLE,
+  UNIQUE INDEX `user_email_UNIQUE` (`user_email` ASC) VISIBLE,
+  UNIQUE INDEX `user_login_UNIQUE` (`user_login` ASC) VISIBLE,
+  INDEX `FK_cities_user_idx` (`cities_id` ASC) VISIBLE,
+  CONSTRAINT `FK_cities_user`
+    FOREIGN KEY (`cities_id`)
+    REFERENCES `db_agroinsect`.`cities` (`cities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+
+
+CREATE TABLE IF NOT EXISTS `db_agroinsect`.`role` (
+  `role_id` INT NOT NULL AUTO_INCREMENT,
+  `role_name` VARCHAR(45) NULL,
+  PRIMARY KEY (`role_id`),
+  UNIQUE INDEX `role_name_UNIQUE` (`role_name` ASC) VISIBLE)
+ENGINE = InnoDB
+
+
+CREATE TABLE IF NOT EXISTS `db_agroinsect`.`user_role` (
+  `user_id` INT NOT NULL,
+  `role_id` INT NOT NULL,
+  `user_role` VARCHAR(45) NULL,
+  `user_role_created` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`, `role_id`),
+  INDEX `role_id_idx` (`role_id` ASC) VISIBLE,
+  CONSTRAINT `user_id`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `db_agroinsect`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `role_id`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `db_agroinsect`.`role` (`role_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
